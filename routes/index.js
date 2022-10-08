@@ -41,11 +41,11 @@ const stages = [
   },
   {
     id: "688270",
-    race: "Grosser Preis von Osterreich"
+    race: "Grosser Preis von Osterreich" // Austria 
   },
   {
     id: "688718",
-    race: "Magyar Nagydij"
+    race: "Magyar Nagydij" // Hungary
   },
   {
     id: "688948",
@@ -101,7 +101,7 @@ const stages = [
   },
   {
     id: "718612",
-    race: "Gran Premio d'Italia" 
+    race: "Gran Premio d'Italia"
   },
   {
     id: "725502",
@@ -113,9 +113,52 @@ const stages = [
   }
 ];
 
+const seasons = [
+  {
+    id: '937183',
+    year: '2022'
+  },
+  {
+    id: '686252',
+    year: '2021'
+  },
+  {
+    id: '547803',
+    year: '2020'
+  }
+];
+
 const API_KEY = process.env.API_KEY
 
-router.get(`/:stage`, (req, res) => {
+// http://localhost:8080/api 
+// Search Season 
+router.get(`/:season`, (req, res) => {
+  const { season } = req.params;
+  console.log("season", season);
+
+  const findSeason =
+    seasons.map(year => {
+      if (year.year === season) {
+        console.log("year.year", year.year);
+        console.log("~~~~~~~~~~~~~~~~~ year.id ~~~~~~~~~~~~~~~~~", year.id);
+        return year.id;
+      }
+    });
+
+
+  const url = `https://api.sportradar.us/formula1/trial/v2/en/sport_events/sr:stage:${findSeason}/schedule.json?api_key=${API_KEY}`;
+  axios.get(url)
+  .then(response => {
+      console.log("URL", url);
+      res.send(response.data);
+    })
+    .catch(err => {
+      console.log(err);
+    })
+})
+
+// Search Race in Season
+router.get(`/:season/:stage`, (req, res) => {
   const { stage } = req.params;
   const url = `https://api.sportradar.com/formula1/trial/v2/us/sport_events/sr:stage:${stage}/probabilities.json?api_key=${API_KEY}`;
   axios.get(url)
@@ -126,5 +169,8 @@ router.get(`/:stage`, (req, res) => {
       console.log(err);
     })
 })
+
+
+
 
 module.exports = router
