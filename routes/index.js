@@ -131,25 +131,21 @@ const seasons = [
 const API_KEY = process.env.API_KEY
 
 // http://localhost:8080/api 
-// Search Season 
-router.get(`/:season`, (req, res) => {
-  const { season } = req.params;
-  console.log("season", season);
+// Search season by year
+router.get(`/:year`, (req, res) => {
+  const { year } = req.params;
 
-  const findSeason =
-    seasons.map(year => {
-      if (year.year === season) {
-        console.log("year.year", year.year);
-        console.log("~~~~~~~~~~~~~~~~~ year.id ~~~~~~~~~~~~~~~~~", year.id);
-        return year.id;
-      }
-    });
+  let foundSeason;
 
+  for (let season of seasons) {
+    if (season.year === year) {
+      foundSeason = season.id;
+    }
+  }
 
-  const url = `https://api.sportradar.us/formula1/trial/v2/en/sport_events/sr:stage:${findSeason}/schedule.json?api_key=${API_KEY}`;
+  const url = `https://api.sportradar.us/formula1/trial/v2/en/sport_events/sr:stage:${foundSeason}/schedule.json?api_key=${API_KEY}`;
   axios.get(url)
-  .then(response => {
-      console.log("URL", url);
+    .then(response => {
       res.send(response.data);
     })
     .catch(err => {
