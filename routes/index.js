@@ -2,6 +2,9 @@ const axios = require("axios")
 const express = require('express');
 const router = express.Router();
 
+const API_KEY = process.env.API_KEY
+const API_KEY2 = process.env.API_KEY2
+
 const stages = [
   {
     id: "686270",
@@ -128,22 +131,12 @@ const seasons = [
   }
 ];
 
-const API_KEY = process.env.API_KEY
 
 // http://localhost:8080/api 
-// Search season by year
-router.get(`/:year`, (req, res) => {
-  const { year } = req.params;
-
-  let foundSeason;
-
-  for (let season of seasons) {
-    if (season.year === year) {
-      foundSeason = season.id;
-    }
-  }
-
-  const url = `https://api.sportradar.us/formula1/trial/v2/en/sport_events/sr:stage:${foundSeason}/schedule.json?api_key=${API_KEY}`;
+// Search races by season
+router.get(`/season/:yearId`, (req, res) => {
+  const { yearId } = req.params;
+  const url = `https://api.sportradar.us/formula1/trial/v2/en/sport_events/sr:stage:${yearId}/schedule.json?api_key=${API_KEY2}`;
   axios.get(url)
     .then(response => {
       res.send(response.data);
@@ -154,9 +147,10 @@ router.get(`/:year`, (req, res) => {
 })
 
 // Search Race in Season
-router.get(`/:season/:stage`, (req, res) => {
+// router.get(`/:season/:stage`, (req, res) => {
+router.get(`/:stage`, (req, res) => {
   const { stage } = req.params;
-  const url = `https://api.sportradar.com/formula1/trial/v2/us/sport_events/sr:stage:${stage}/probabilities.json?api_key=${API_KEY}`;
+  const url = `https://api.sportradar.com/formula1/trial/v2/us/sport_events/sr:stage:${stage}/probabilities.json?api_key=${API_KEY2}`;
   axios.get(url)
     .then(response => {
       res.send(response.data);
@@ -166,7 +160,17 @@ router.get(`/:season/:stage`, (req, res) => {
     })
 })
 
-
-
+// Search Race Result by Race
+router.get(`/result/:stage`, (req, res) => {
+  const { stage } = req.params;
+  const url = `https://api.sportradar.us/formula1/trial/v2/en/sport_events/sr:stage:${stage}/summary.json?api_key=${API_KEY2}`;
+  axios.get(url)
+    .then(response => {
+      res.send(response.data);
+    })
+    .catch(err => {
+      console.log(err);
+    })
+})
 
 module.exports = router
