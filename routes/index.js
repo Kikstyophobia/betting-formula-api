@@ -136,6 +136,7 @@ const seasons = [
 // Search races by season
 router.get(`/season/:yearId`, (req, res) => {
   const { yearId } = req.params;
+
   const url = `https://api.sportradar.us/formula1/trial/v2/en/sport_events/sr:stage:${yearId}/schedule.json?api_key=${API_KEY2}`;
   axios.get(url)
     .then(response => {
