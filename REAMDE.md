@@ -1,5 +1,5 @@
-## Betting Formula
-
+# Betting Formula
+Backend component for Betting Formula that retrieves all the necessary API data.
 
 ## Setup 
 
